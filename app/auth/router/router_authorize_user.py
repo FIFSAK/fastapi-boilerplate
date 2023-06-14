@@ -9,6 +9,8 @@ from . import router
 from .errors import InvalidCredentialsException
 
 
+
+
 class AuthorizeUserResponse(AppModel):
     access_token: str
     token_type: str = "Bearer"
