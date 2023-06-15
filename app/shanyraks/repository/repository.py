@@ -70,12 +70,36 @@ class ShanyrakRepository:
             },
         )
 
-
-
     def delete_comment(self, shanyrak_id: str, comment_id: str) -> UpdateResult:
         return self.database["shanyraks"].update_one(
             filter={"_id": ObjectId(shanyrak_id)},
             update={
                 "$pull": {"comments": {"_id": ObjectId(comment_id)}},
+            },
+        )
+
+    def add_media(self, shanyrak_id: str, media_urls: list[str]):
+        return self.database["shanyraks"].update_one(
+            filter={"_id": ObjectId(shanyrak_id)},
+            update={
+                "$push": {
+                    "media": {"$each": media_urls}
+                },  # Each media url is added to the media array
+            },
+        )
+
+    def get_shanyrak_media(self, shanyrak_id: str):
+        shanyrak = self.database["shanyraks"].find_one({"_id": ObjectId(shanyrak_id)})
+        if shanyrak is not None:
+            # convert user_id and media items to strings
+            shanyrak["user_id"] = str(shanyrak["user_id"])
+            shanyrak["media"] = [{"url": url} for url in shanyrak["media"]]
+        return shanyrak
+
+    def delete_media(self, shanyrak_id: str, urls: list[str]):
+        return self.database["shanyraks"].update_one(
+            filter={"_id": ObjectId(shanyrak_id)},
+            update={
+                "$pull": {"media": urls},
             },
         )
