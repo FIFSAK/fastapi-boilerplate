@@ -12,4 +12,3 @@ class Service:
 def get_service():
     svc = Service()
     return svc
-gi
