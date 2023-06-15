@@ -13,8 +13,7 @@ from . import router
 @router.delete("/{shanyrak_id:str}/media")
 def delete_media(
     shanyrak_id: str,
-    urls: list[str],
     svc: Service = Depends(get_service),
 ) -> Response:
-    svc.repository.delete_media(shanyrak_id, urls)
+    svc.repository.delete_media(shanyrak_id)
     return Response(status_code=200)

@@ -96,10 +96,11 @@ class ShanyrakRepository:
             shanyrak["media"] = [{"url": url} for url in shanyrak["media"]]
         return shanyrak
 
-    def delete_media(self, shanyrak_id: str, urls: list[str]):
+    def delete_media(self, shanyrak_id: str):
         return self.database["shanyraks"].update_one(
             filter={"_id": ObjectId(shanyrak_id)},
             update={
-                "$pull": {"media": urls},
+                "$set": {"media": []},
             },
         )
+
