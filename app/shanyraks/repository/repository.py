@@ -4,6 +4,8 @@ from bson.objectid import ObjectId
 from pymongo.database import Database
 from pymongo.results import DeleteResult, UpdateResult
 
+# from ..router.router_get_favorites import ShanyrakPreview
+
 
 class ShanyrakRepository:
     def __init__(self, database: Database):
@@ -56,7 +58,7 @@ class ShanyrakRepository:
         return self.database["shanyraks"].update_one(
             filter={"_id": ObjectId(shanyrak_id), "user_id": ObjectId(user_id)},
             update={
-                "$set": data,
+                "$set": content,
             },
         )
 
@@ -103,4 +105,42 @@ class ShanyrakRepository:
                 "$set": {"media": []},
             },
         )
+
+    # def create_shanyrak(self, user_id: str, data: dict[str, Any]):
+    #     data["user_id"] = ObjectId(user_id)
+    #     insert_result = self.database["shanyraks"].insert_one(data)
+    #     return insert_result.inserted_id
+
+    def add_favorites(self, data: dict[str, Any]):
+        return self.database["favorites"].insert_one(data)
+
+    # def get_favorites(self):
+    #     return self.database["favorites"].all
+
+    # def get_user_favorites(self, user_id: str):
+    #     favorites = self.database["favorites"].find({"user_id": user_id})
+    #     shanyrak_previews = []
+    #     for favorite in favorites:
+    #         shanyrak_id = favorite["shanyrak_id"]
+    #         shanyrak = self.database["shanyraks"].find_one({"_id": ObjectId(shanyrak_id)}, {"_id": 1, "address": 1})
+    #         if shanyrak is not None:
+    #             shanyrak_previews.append(ShanyrakPreview(**shanyrak))
+    #     return shanyrak_previews
+
+    def get_user_favorites(self, user_id: str):
+        favorites_cursor = self.database["favorites"].find(
+            {"user_id": ObjectId(user_id)}
+        )
+        favorites = list(favorites_cursor)
+        shanyrak_previews = []
+        for favorite in favorites:
+            shanyrak_previews.append(
+                {"_id": str(favorite["_id"]), "address": favorite["address"]}
+            )
+        return shanyrak_previews
+
+    def delete_favorite(self, user_id: str, shanyrak_id: str):
+        result = self.database["favorites"].delete_one({"user_id": ObjectId(user_id), "_id": ObjectId(shanyrak_id)})
+        if result.deleted_count == 0:
+            raise Exception("Favorite not found or deletion was unsuccessful")
 

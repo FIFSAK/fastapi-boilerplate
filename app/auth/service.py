@@ -1,7 +1,7 @@
 from pydantic import BaseSettings
 
 from app.config import database
-
+from .adapters.s3_service import S3Service
 from .adapters.jwt_service import JwtService
 from .repository.repository import AuthRepository
 
@@ -23,6 +23,14 @@ class Service:
     ):
         self.repository = repository
         self.jwt_svc = jwt_svc
+        self.s3_service = S3Service()
+    
+    def delete_avatar(self, user_id: str):
+        user = self.repository.get_user_by_id(user_id)
+        if user and user["avatar"]:
+            filename = user['avatar'].split("/")[-1]
+            self.s3_service.delete_file(filename)
+            self.repository.update_user(user_id, {"avatar": None})
 
 
 def get_service():
@@ -31,3 +39,5 @@ def get_service():
 
     svc = Service(repository, jwt_svc)
     return svc
+
+

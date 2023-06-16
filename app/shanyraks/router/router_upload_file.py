@@ -11,7 +11,6 @@ def upload_files(
     files: List[UploadFile],
     svc: Service = Depends(get_service),
 ):
-    
     result = []
     for file in files:
         url = svc.s3_service.upload_file(file.file, file.filename)

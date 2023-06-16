@@ -47,3 +47,27 @@ class AuthRepository:
                 }
             },
         )
+
+    def upload_avatar(self, user_id: str, media_url: str):
+        return self.database["users"].update_one(
+            filter={"_id": ObjectId(user_id)},
+            update={
+                "$set": {"avatar": media_url},
+            },
+        )
+
+    def get_avatar(self, user_id: str) -> Optional[dict]:
+        user = self.database["users"].find_one(
+            {
+                "_id": ObjectId(user_id),
+            }
+        )
+        return user
+
+    def delete_avatar(self, user_id: str):
+        return self.database["users"].update_one(
+            filter={"_id": ObjectId(user_id)},
+            update={
+                "$set": {"avatar": ""},
+            },
+        )

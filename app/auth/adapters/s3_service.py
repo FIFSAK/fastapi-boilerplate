@@ -20,6 +20,10 @@ class S3Service:
 
         return object_url
     
-    # def delete_file(self, filekey: str):
-    #     self.s3.delete_object(Bucket=self.bucket, Key=filekey)
+    def delete_file(self, filename: str):
+        bucket = "an-kurmanov-bucket"
+        filekey = f"posts/{filename}"
 
+        self.s3.delete_object(Bucket=bucket, Key=filekey)
+
+    
