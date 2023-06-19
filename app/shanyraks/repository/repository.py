@@ -140,7 +140,16 @@ class ShanyrakRepository:
         return shanyrak_previews
 
     def delete_favorite(self, user_id: str, shanyrak_id: str):
-        result = self.database["favorites"].delete_one({"user_id": ObjectId(user_id), "_id": ObjectId(shanyrak_id)})
+        result = self.database["favorites"].delete_one(
+            {"user_id": ObjectId(user_id), "_id": ObjectId(shanyrak_id)}
+        )
         if result.deleted_count == 0:
             raise Exception("Favorite not found or deletion was unsuccessful")
 
+    def add_location(self, shanyrak_id: str, data: dict[str, Any]):
+        return self.database["shanyraks"].update_one(
+            filter={"_id": ObjectId(shanyrak_id)},
+            update={
+                "$push": data,
+            },
+        )

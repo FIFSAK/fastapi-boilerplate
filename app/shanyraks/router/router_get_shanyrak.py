@@ -20,6 +20,7 @@ class GetShanyrakResponse(AppModel):
     area: float
     rooms_count: int
     description: str
+    location: Any
     user_id: Any
 
 
